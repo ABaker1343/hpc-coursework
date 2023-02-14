@@ -125,10 +125,13 @@ int main(){
   
   /*** Update solution by looping over time steps ***/
   /* LOOP 5 */
+  /* this loop cannot be parallelised because the order in which we evaluate the time
+   * steps must be preserved */
   for (int m=0; m<nsteps; m++){
     
     /*** Apply boundary conditions at u[0][:] and u[NX+1][:] ***/
     /* LOOP 6 */
+#pragma omp parallel for
     for (int j=0; j<NY+2; j++){
       u[0][j]    = bval_left;
       u[NX+1][j] = bval_right;
@@ -136,6 +139,7 @@ int main(){
 
     /*** Apply boundary conditions at u[:][0] and u[:][NY+1] ***/
     /* LOOP 7 */
+#pragma omp parallel for
     for (int i=0; i<NX+2; i++){
       u[i][0]    = bval_lower;
       u[i][NY+1] = bval_upper;
@@ -144,6 +148,8 @@ int main(){
     /*** Calculate rate of change of u using leftward difference ***/
     /* Loop over points in the domain but not boundary values */
     /* LOOP 8 */
+    /* this loop cannot be parallelised because values for each itteration are dependant
+     * on values from the previous itteration and therefore must be done in series */
     for (int i=1; i<NX+1; i++){
       for (int j=1; j<NY+1; j++){
 	dudt[i][j] = -velx * (u[i][j] - u[i-1][j]) / dx
@@ -154,6 +160,7 @@ int main(){
     /*** Update u from t to t+dt ***/
     /* Loop over points in the domain but not boundary values */
     /* LOOP 9 */
+#pragma omp parallel for
     for	(int i=1; i<NX+1; i++){
       for (int j=1; j<NY+1; j++){
 	u[i][j] = u[i][j] + dudt[i][j] * dt;
@@ -166,6 +173,8 @@ int main(){
   FILE *finalfile;
   finalfile = fopen("final.dat", "w");
   /* LOOP 10 */
+  /* this loop cannot be parallelised because the order in which we write to the file should be preserved 
+   * and that is not guaranteed when we parallelise the loop */
   for (int i=0; i<NX+2; i++){
     for (int j=0; j<NY+2; j++){
       fprintf(finalfile, "%g %g %g\n", x[i], y[j], u[i][j]);
