@@ -1,0 +1,32 @@
+# This gnuplot script plots the results from the first coursework assignment. 
+# It is assumed that the data to be plotted are in a file called
+# final.dat which contains 3 columns: x,y,u
+# The plot is sent to a PNG file called final.png 
+# To use this file copy it to the directory/folder containing 
+# final.dat and run the command: 
+# gnuplot plot_final 
+
+
+# Send output to a PNG file
+set terminal png  enhanced 
+# Set the name of the output file
+set output "avg.png"
+
+# Set ranges and labels for axes
+#set xrange [0:30.0]
+#set yrange [0:30.0]
+#set xlabel "x"
+#set ylabel "y"
+
+# Enforce an aspect ratio of 1
+#set size square
+
+# Plot the data
+set style line 1 \
+    linecolor rgb '#0060ad' \
+    linetype 1 linewidth 0.2 \
+    pointtype 7 pointsize 0.3
+
+plot 'avg.dat' with lines
+
+# End of file

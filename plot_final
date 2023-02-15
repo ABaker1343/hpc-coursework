@@ -13,8 +13,8 @@ set terminal png  enhanced
 set output "final.png"
 
 # Set ranges and labels for axes
-set xrange [0:1.0]
-set yrange [0:1.0]
+set xrange [0:30.0]
+set yrange [0:30.0]
 set xlabel "x"
 set ylabel "y"
 
